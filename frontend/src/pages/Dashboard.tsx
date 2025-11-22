@@ -10,10 +10,10 @@ export const Dashboard = () => {
     const navigate = useNavigate();
 
     const stats = [
-        { label: 'Total Students', value: students.length, icon: GraduationCap, color: '#6366f1' },
-        { label: 'Total Teachers', value: teachers.length, icon: Users, color: '#ec4899' },
-        { label: 'Active Classes', value: classes.length, icon: BookOpen, color: '#10b981' },
-        { label: 'Attendance', value: '98%', icon: TrendingUp, color: '#f59e0b' },
+        { label: 'Total Students', value: students.length, icon: GraduationCap, color: '#6366f1', path: '/students' },
+        { label: 'Total Teachers', value: teachers.length, icon: Users, color: '#ec4899', path: '/teachers' },
+        { label: 'Active Classes', value: classes.length, icon: BookOpen, color: '#10b981', path: '/classes' },
+        { label: 'Attendance', value: '98%', icon: TrendingUp, color: '#f59e0b', path: null },
     ];
 
     const chartData = classes.map(cls => ({
@@ -31,19 +31,26 @@ export const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
                 {stats.map((stat, index) => {
                     const Icon = stat.icon;
+                    const isClickable = !!stat.path;
                     return (
-                        <Card key={index} className="flex items-center gap-4">
-                            <div
-                                className="p-3 rounded-full text-white shadow-lg"
-                                style={{ backgroundColor: stat.color }}
-                            >
-                                <Icon size={24} />
-                            </div>
-                            <div>
-                                <p className="text-sm text-[var(--text-muted)] font-medium">{stat.label}</p>
-                                <h4 className="text-2xl font-bold">{stat.value}</h4>
-                            </div>
-                        </Card>
+                        <div
+                            key={index}
+                            onClick={() => isClickable && stat.path && navigate(stat.path)}
+                            className={isClickable ? "cursor-pointer transition-transform hover:scale-105" : ""}
+                        >
+                            <Card className="flex items-center gap-4 h-full">
+                                <div
+                                    className="p-3 rounded-full text-white shadow-lg"
+                                    style={{ backgroundColor: stat.color }}
+                                >
+                                    <Icon size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[var(--text-muted)] font-medium">{stat.label}</p>
+                                    <h4 className="text-2xl font-bold">{stat.value}</h4>
+                                </div>
+                            </Card>
+                        </div>
                     );
                 })}
             </div>
