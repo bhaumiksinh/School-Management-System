@@ -1,0 +1,161 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: school-service
+          uri: lb://school-service
+          predicates:
+            - Path=/api/school/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: schoolService
+                fallbackUri: forward:/fallback/school
+        - id: teacher-service
+          uri: lb://teacher-service
+          predicates:
+            - Path=/api/teachers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: teacherService
+                fallbackUri: forward:/fallback/teacher
+        - id: class-service
+          uri: lb://class-service
+          predicates:
+            - Path=/api/classes/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: classService
+                fallbackUri: forward:/fallback/class
+        - id: student-service
+          uri: lb://student-service
+          predicates:
+            - Path=/api/students/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: studentService
+                fallbackUri: forward:/fallback/student
+        - id: attendance-service
+          uri: lb://attendance-service
+          predicates:
+            - Path=/api/attendance/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: attendanceService
+                fallbackUri: forward:/fallback/attendance
+        - id: exam-service
+          uri: lb://exam-service
+          predicates:
+            - Path=/api/exams/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: examService
+                fallbackUri: forward:/fallback/exam
+        - id: library-service
+          uri: lb://library-service
+          predicates:
+            - Path=/api/library/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: libraryService
+                fallbackUri: forward:/fallback/library
+        - id: fee-service
+          uri: lb://fee-service
+          predicates:
+            - Path=/api/fees/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: feeService
+                fallbackUri: forward:/fallback/fee
+        - id: timetable-service
+          uri: lb://timetable-service
+          predicates:
+            - Path=/api/timetable/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: timetableService
+                fallbackUri: forward:/fallback/timetable
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
+    instances:
+      schoolService:
+        baseConfig: default
+      teacherService:
+        baseConfig: default
+      classService:
+        baseConfig: default
+      studentService:
+        baseConfig: default
+      attendanceService:
+        baseConfig: default
+      examService:
+        baseConfig: default
+      libraryService:
+        baseConfig: default
+      feeService:
+        baseConfig: default
+      timetableService:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 3s
+    instances:
+      schoolService:
+        baseConfig: default
+      teacherService:
+        baseConfig: default
+      classService:
+        baseConfig: default
+      studentService:
+        baseConfig: default
+      attendanceService:
+        baseConfig: default
+      examService:
+        baseConfig: default
+      libraryService:
+        baseConfig: default
+      feeService:
+        baseConfig: default
+      timetableService:
+        baseConfig: default

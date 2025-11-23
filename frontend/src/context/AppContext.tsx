@@ -40,7 +40,7 @@ interface AppContextType {
     students: Student[];
     addStudent: (student: Student) => void;
     isAuthenticated: boolean;
-    login: () => void;
+    login: (username?: string, password?: string) => void;
     logout: () => void;
 }
 
@@ -60,20 +60,29 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [students, setStudents] = useState<Student[]>([]);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const [token, setToken] = useState<string | null>(null);
+
     const API_BASE = 'http://localhost:8080/api';
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && token) {
             fetchSchool();
             fetchTeachers();
             fetchClasses();
             fetchStudents();
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, token]);
+
+    const getHeaders = () => {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${token}`
+        };
+    };
 
     const fetchSchool = async () => {
         try {
-            const res = await fetch(`${API_BASE}/school`);
+            const res = await fetch(`${API_BASE}/school`, { headers: getHeaders() });
             if (res.ok) setSchool(await res.json());
         } catch (err) {
             console.error("Failed to fetch school", err);
@@ -82,7 +91,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchTeachers = async () => {
         try {
-            const res = await fetch(`${API_BASE}/teachers`);
+            const res = await fetch(`${API_BASE}/teachers`, { headers: getHeaders() });
             if (res.ok) setTeachers(await res.json());
         } catch (err) {
             console.error("Failed to fetch teachers", err);
@@ -91,7 +100,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchClasses = async () => {
         try {
-            const res = await fetch(`${API_BASE}/classes`);
+            const res = await fetch(`${API_BASE}/classes`, { headers: getHeaders() });
             if (res.ok) setClasses(await res.json());
         } catch (err) {
             console.error("Failed to fetch classes", err);
@@ -100,7 +109,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchStudents = async () => {
         try {
-            const res = await fetch(`${API_BASE}/students`);
+            const res = await fetch(`${API_BASE}/students`, { headers: getHeaders() });
             if (res.ok) setStudents(await res.json());
         } catch (err) {
             console.error("Failed to fetch students", err);
@@ -111,7 +120,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await fetch(`${API_BASE}/school`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(newSchool)
             });
             if (res.ok) setSchool(await res.json());
@@ -124,7 +133,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await fetch(`${API_BASE}/teachers`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(teacher)
             });
             if (res.ok) {
@@ -140,7 +149,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await fetch(`${API_BASE}/classes`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(classItem)
             });
             if (res.ok) {
@@ -156,7 +165,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await fetch(`${API_BASE}/students`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 body: JSON.stringify(student)
             });
             if (res.ok) {
@@ -168,8 +177,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const login = () => setIsAuthenticated(true);
-    const logout = () => setIsAuthenticated(false);
+    const login = (username?: string, password?: string) => {
+        if (username && password) {
+            const credentials = btoa(`${username}:${password}`);
+            setToken(credentials);
+            setIsAuthenticated(true);
+        }
+    };
+
+    const logout = () => {
+        setIsAuthenticated(false);
+        setToken(null);
+    };
 
     return (
         <AppContext.Provider value={{

@@ -5,7 +5,6 @@ import { Card } from '../components/Card';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 
-
 export const Login = () => {
     const { login } = useApp();
     const navigate = useNavigate();
@@ -16,7 +15,7 @@ export const Login = () => {
     const handleLogin = (e: FormEvent) => {
         e.preventDefault();
         if (username && password) {
-            login();
+            login(username, password);
             navigate('/');
         } else {
             setError('Please enter both username and password');

@@ -39,6 +39,11 @@ The **School Management System** leverages the power of **Spring Boot** and **Re
 -   **👨‍🏫 Teacher Management**: Register and manage teacher profiles, assigning them to specific schools.
 -   **📚 Class Management**: Organize classes, assign teachers, and manage student capacity.
 -   **🎓 Student Management**: Register students, track enrollments, and view detailed student profiles.
+-   **📅 Attendance Management**: Track daily student attendance and generate reports.
+-   **📝 Exam Management**: Schedule exams, record marks, and generate student report cards.
+-   **📖 Library Management**: Manage book inventory, issue/return books, and track due dates.
+-   **💰 Fee Management**: Generate fee invoices, record payments, and track outstanding dues.
+-   **🗓️ Timetable Management**: Create and manage weekly class schedules and teacher assignments.
 
 ### ⚙️ Technical Capabilities
 -   **⚡ Event-Driven Architecture**: Asynchronous communication between services using **Apache Kafka** (e.g., Student registration triggers School updates).
@@ -78,14 +83,16 @@ graph TD
         Teacher[Teacher Service]
         Class[Class Service]
         Student[Student Service]
+        Attendance[Attendance Service]
+        Exam[Exam Service]
+        Library[Library Service]
+        Fee[Fee Service]
+        Timetable[Timetable Service]
     end
 
     subgraph Data [Data Layer]
         direction TB
         DB1[(H2 DB)]
-        DB2[(H2 DB)]
-        DB3[(H2 DB)]
-        DB4[(H2 DB)]
     end
 
     %% Routing
@@ -93,12 +100,22 @@ graph TD
     Gateway -->|Route /teachers| Teacher
     Gateway -->|Route /classes| Class
     Gateway -->|Route /students| Student
+    Gateway -->|Route /attendance| Attendance
+    Gateway -->|Route /exams| Exam
+    Gateway -->|Route /library| Library
+    Gateway -->|Route /fees| Fee
+    Gateway -->|Route /timetable| Timetable
 
     %% Service Discovery
     School -.->|Register| Eureka
     Teacher -.->|Register| Eureka
     Class -.->|Register| Eureka
     Student -.->|Register| Eureka
+    Attendance -.->|Register| Eureka
+    Exam -.->|Register| Eureka
+    Library -.->|Register| Eureka
+    Fee -.->|Register| Eureka
+    Timetable -.->|Register| Eureka
     Gateway -.->|Discover| Eureka
 
     %% Async Communication
@@ -177,7 +194,12 @@ school-management/
 │   ├── school-service/     # School Management (Port 8081)
 │   ├── teacher-service/    # Teacher Management (Port 8082)
 │   ├── class-service/      # Class Management (Port 8083)
-│   └── student-service/    # Student Management (Port 8084)
+│   ├── student-service/    # Student Management (Port 8084)
+│   ├── attendance-service/ # Attendance Management (Port 8085)
+│   ├── exam-service/       # Exam Management (Port 8086)
+│   ├── library-service/    # Library Management (Port 8087)
+│   ├── fee-service/        # Fee Management (Port 8088)
+│   └── timetable-service/  # Timetable Management (Port 8089)
 ├── frontend/               # React Application (Port 5173)
 ├── docker-compose.yml      # Kafka Infrastructure
 └── README.md               # Documentation
@@ -212,12 +234,17 @@ cd backend/api-gateway
 mvn spring-boot:run
 ```
 
-**Microservices (8081-8084)**
+**Microservices (8081-8089)**
 Run `mvn spring-boot:run` in each service directory:
 -   `backend/school-service`
 -   `backend/teacher-service`
 -   `backend/class-service`
 -   `backend/student-service`
+-   `backend/attendance-service`
+-   `backend/exam-service`
+-   `backend/library-service`
+-   `backend/fee-service`
+-   `backend/timetable-service`
 
 ### 3. Start Frontend
 ```bash
