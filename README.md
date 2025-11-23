@@ -30,8 +30,6 @@ The **School Management System** leverages the power of **Spring Boot** and **Re
 
 ## ✨ Features
 
-## ✨ Features
-
 ### 🖥️ Core Modules
 -   **🔐 Secure Authentication**: Centralized security via API Gateway using Spring Security (Basic Auth).
 -   **📊 Interactive Dashboard**: Real-time analytics with visual charts and quick action shortcuts.
@@ -56,7 +54,15 @@ The **School Management System** leverages the power of **Spring Boot** and **Re
 
 ## 🏗️ Architecture
 
-The system follows a standard Microservices pattern with an API Gateway and Service Discovery.
+The system follows a **Microservices Architecture** pattern with the following key components:
+
+### Architecture Highlights
+-   **API Gateway Pattern**: Single entry point for all client requests (Port 8080)
+-   **Service Discovery**: Automatic service registration and discovery via Eureka (Port 8761)
+-   **Load Balancing**: Client-side load balancing through Spring Cloud LoadBalancer
+-   **Circuit Breaker**: Fault tolerance with Resilience4j to prevent cascading failures
+-   **Event-Driven Communication**: Asynchronous messaging using Apache Kafka for inter-service events
+-   **Distributed Database**: Each microservice maintains its own H2 database for data isolation
 
 ```mermaid
 graph TD
@@ -119,6 +125,36 @@ graph TD
     Timetable --- DB1
 ```
 
+### Key Architecture Benefits
+-   ✅ **Scalability**: Individual services can be scaled independently
+-   ✅ **Resilience**: Service failures are isolated and handled gracefully
+-   ✅ **Flexibility**: Different services can use different technologies if needed
+-   ✅ **Maintainability**: Smaller, focused codebases are easier to understand and modify
+
+---
+
+## 🔒 Security
+
+The system implements multiple layers of security:
+
+### Authentication & Authorization
+-   **BCrypt Password Encryption**: All passwords are encrypted using BCrypt hashing algorithm
+-   **Spring Security**: Centralized security configuration at the API Gateway
+-   **HTTP Basic Authentication**: Secure authentication mechanism for API access
+-   **Role-Based Access Control**: User roles and permissions management
+
+### Network Security
+-   **CORS Configuration**: Controlled cross-origin resource sharing
+-   **CSRF Protection**: Cross-site request forgery protection (configurable)
+-   **Secure Headers**: HTTP security headers configuration
+
+### Default Credentials
+> [!WARNING]
+> For production deployment, change the default credentials immediately!
+
+-   **Username**: `admin`
+-   **Password**: `password` (stored as BCrypt hash: `$2a$10$slYQMMLyC...`)
+
 ---
 
 ## 🛠️ Tech Stack
@@ -139,9 +175,15 @@ graph TD
 ### Microservices Ecosystem
 -   **Service Discovery**: Netflix Eureka
 -   **API Gateway**: Spring Cloud Gateway
--   **Security**: Spring Security
--   **Messaging**: Apache Kafka
--   **Resilience**: Resilience4j (Circuit Breaker)
+-   **Security**: Spring Security with BCrypt
+-   **Messaging**: Apache Kafka 7.5.0
+-   **Resilience**: Resilience4j (Circuit Breaker, Timeout)
+-   **Containerization**: Docker & Docker Compose
+
+### Development Tools
+-   **Version Control**: Git + GitHub
+-   **Package Manager**: Maven (Backend), npm (Frontend)
+-   **API Testing**: Postman/cURL compatible REST APIs
 
 ---
 
@@ -240,18 +282,145 @@ npm run dev
 
 ## 🌐 Usage
 
-1.  Visit `http://localhost:5173`.
+### Accessing the Application
+
+1.  Open your browser and navigate to `http://localhost:5173`
 2.  **Login Credentials**:
     -   **Username**: `admin`
     -   **Password**: `password`
-3.  Explore the dashboard and management modules.
+3.  You'll be directed to the interactive dashboard
+
+### Available Endpoints
+
+#### Service URLs
+-   **Frontend**: `http://localhost:5173`
+-   **API Gateway**: `http://localhost:8080`
+-   **Eureka Dashboard**: `http://localhost:8761`
+
+#### API Routes (via Gateway)
+All backend services are accessible through the API Gateway at `http://localhost:8080/api`:
+
+| Service | Endpoint | Port (Direct) |
+|---------|----------|---------------|
+| School | `/api/school/**` | 8081 |
+| Teacher | `/api/teachers/**` | 8082 |
+| Class | `/api/classes/**` | 8083 |
+| Student | `/api/students/**` | 8084 |
+| Attendance | `/api/attendance/**` | 8085 |
+| Exam | `/api/exams/**` | 8086 |
+| Library | `/api/library/**` | 8087 |
+| Fee | `/api/fees/**` | 8088 |
+| Timetable | `/api/timetable/**` | 8089 |
+
+### Example API Calls
+
+```bash
+# Get all schools (with authentication)
+curl -u admin:password http://localhost:8080/api/school/all
+
+# Get all students
+curl -u admin:password http://localhost:8080/api/students/all
+
+# Create a new teacher (POST)
+curl -u admin:password -X POST http://localhost:8080/api/teachers \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","subject":"Mathematics"}'
+```
+
+---
+
+## 🚀 Deployment
+
+### Production Considerations
+
+> [!IMPORTANT]
+> Before deploying to production:
+
+1.  **Change Default Credentials**: Update username and password in `SecurityConfig.java`
+2.  **Use Production Database**: Replace H2 with MySQL/PostgreSQL
+3.  **Configure Environment Variables**: Externalize configuration
+4.  **Enable HTTPS**: Configure SSL/TLS certificates
+5.  **Set Up Monitoring**: Implement logging and monitoring solutions
+6.  **Scale Services**: Deploy multiple instances behind load balancers
+
+### Docker Deployment
+
+Package each service as a Docker container and use Kubernetes or Docker Swarm for orchestration.
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Services not registering with Eureka**
+-   Ensure Discovery Service is running on port 8761
+-   Check `application.properties` for correct Eureka URL
+-   Wait 30-60 seconds for registration to complete
+
+**CORS errors in frontend**
+-   Verify API Gateway CORS configuration includes your frontend URL
+-   Check browser console for specific CORS error details
+
+**Kafka connection issues**
+-   Ensure Docker Desktop is running
+-   Verify Kafka container is up: `docker ps`
+-   Check Kafka logs: `docker-compose logs kafka`
+
+**Authentication failures**
+-   Verify credentials: `admin` / `password`
+-   Clear browser cache and cookies
+-   Check API Gateway logs for security errors
+
+---
+
+## 📊 System Requirements
+
+### Minimum Requirements
+-   **CPU**: 4 cores
+-   **RAM**: 8 GB
+-   **Storage**: 2 GB free space
+-   **OS**: Windows 10/11, macOS 10.15+, Linux (Ubuntu 20.04+)
+
+### Recommended Requirements
+-   **CPU**: 8 cores
+-   **RAM**: 16 GB
+-   **Storage**: 5 GB free space
+-   **Network**: Stable internet connection for dependencies
+
+---
+
+## 📝 License
+
+This project is available for educational and personal use.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+Contributions are welcome! Please follow these steps:
+
+1.  Fork the repository
+2.  Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
 ---
 
-*Developed by [Bhaumiksinh](https://github.com/bhaumiksinh)*
+## 👤 Author
+
+**Bhaumiksinh Gohil**
+
+-   GitHub: [@bhaumiksinh](https://github.com/bhaumiksinh)
+-   Repository: [School-Management-System](https://github.com/bhaumiksinh/School-Management-System)
+
+---
+
+## 🙏 Acknowledgments
+
+-   Spring Boot Community
+-   React.js Team
+-   Netflix OSS (Eureka)
+-   Apache Kafka Project
+-   All contributors and supporters
