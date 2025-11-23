@@ -63,6 +63,7 @@ graph TD
 -   **Architecture**: Microservices with Netflix Eureka & Spring Cloud Gateway
 -   **Service Discovery**: Netflix Eureka Server
 -   **API Gateway**: Spring Cloud Gateway
+-   **Security**: Spring Security (Basic Auth)
 -   **Language**: Java 17
 -   **Database**: H2 Database (In-Memory, separate for each service)
 -   **ORM**: Spring Data JPA
@@ -134,6 +135,11 @@ $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 
 The frontend runs on port `5173`.
 
+> [!IMPORTANT]
+> **Login Credentials**:
+> - **Username**: `admin`
+> - **Password**: `password`
+
 1.  Open a new terminal and navigate to the frontend directory:
     ```bash
     cd frontend
@@ -149,9 +155,11 @@ The frontend runs on port `5173`.
 
 ## 🌐 Usage
 
-1.  Ensure all 4 Backend Services and the Frontend are running.
+1.  Ensure all 4 Backend Services, Discovery Service, and API Gateway are running.
 2.  Open your browser and visit `http://localhost:5173`.
-3.  Log in with any non-empty username and password (mock authentication enabled for demo).
+3.  Log in with the credentials:
+    -   **Username**: `admin`
+    -   **Password**: `password`
 4.  Navigate through the sidebar to manage different aspects of the school.
 
 ## 🤝 Contributing
