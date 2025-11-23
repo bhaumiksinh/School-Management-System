@@ -1,22 +1,48 @@
-# School Management System
+# 🎓 School Management System
 
-A modern, full-stack web application designed to streamline school administration. This system allows for efficient management of schools, teachers, classes, and students through a premium, user-friendly interface.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.0-green)
+![React](https://img.shields.io/badge/React-18-blue)
+![Vite](https://img.shields.io/badge/Vite-4-purple)
+![Kafka](https://img.shields.io/badge/Apache_Kafka-7.5.0-black)
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+
+A modern, full-stack web application designed to streamline school administration. Built with a **Microservices Architecture**, this system ensures scalability, fault tolerance, and a premium user experience.
+
+---
+
+## 📑 Table of Contents
+- [Introduction](#-introduction)
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Tech Stack](#-tech-stack)
+- [Fault Tolerance](#-fault-tolerance--resilience)
+- [Project Structure](#-project-structure)
+- [Installation & Running](#-installation--running)
+- [Usage](#-usage)
+- [Contributing](#-contributing)
+
+---
 
 ## 🚀 Introduction
 
-The **School Management System** is built with a robust **Spring Boot** backend (Microservices Architecture) and a dynamic **React** frontend. It features a clean, responsive design with secure authentication, real-time data visualization, and comprehensive CRUD capabilities for all administrative tasks.
+The **School Management System** leverages the power of **Spring Boot** and **React** to provide a comprehensive solution for educational institutions. It moves beyond monolithic limitations by adopting a distributed microservices approach, ensuring that each component (School, Teacher, Class, Student) operates independently yet cohesively.
 
 ## ✨ Features
 
--   **🔐 Authentication**: Secure login system with a dedicated, branded login page.
--   **📊 Dashboard**: Real-time overview with statistics and a "Students per Class" bar chart.
--   **🏫 School Management**: Update and maintain essential school details.
--   **👨‍🏫 Teacher Management**: Register and view teacher profiles.
--   **📚 Class Management**: Organize classes and assign teachers.
--   **🎓 Student Management**: Register students and track their class enrollments.
--   **🎨 Premium UI/UX**: Glassmorphism design, smooth animations, and responsive layout.
+-   **🔐 Secure Authentication**: Centralized security via API Gateway using Spring Security (Basic Auth).
+-   **📊 Interactive Dashboard**: Real-time analytics with visual charts and quick action shortcuts.
+-   **⚡ Event-Driven Architecture**: Asynchronous communication between services using **Apache Kafka**.
+-   **🛡️ Fault Tolerance**: Resilient system design with **Resilience4j** Circuit Breakers and Fallback mechanisms.
+-   **🎨 Premium UI/UX**: Modern Glassmorphism design, responsive layout, and smooth animations.
+-   **🔍 Service Discovery**: Dynamic service registration and discovery using **Netflix Eureka**.
+-   **🚪 API Gateway**: Single entry point for all client requests, handling routing and cross-cutting concerns.
+
+---
 
 ## 🏗️ Architecture
+
+The system follows a standard Microservices pattern with an API Gateway and Service Discovery.
 
 ```mermaid
 graph TD
@@ -84,30 +110,35 @@ graph TD
     class DB1,DB2,DB3,DB4 db;
 ```
 
+---
+
 ## 🛠️ Tech Stack
 
 ### Frontend
 -   **Framework**: React (Vite)
 -   **Language**: TypeScript
--   **Styling**: Custom CSS Variables (Tailwind-like utility classes), Lucide React Icons
+-   **Styling**: Custom CSS Variables, Lucide React Icons
 -   **Charting**: Recharts
 -   **Routing**: React Router DOM
 
-### Backend (Microservices)
+### Backend
 -   **Framework**: Spring Boot 3.2.0
--   **Architecture**: Microservices with Netflix Eureka & Spring Cloud Gateway
--   **Service Discovery**: Netflix Eureka Server
--   **API Gateway**: Spring Cloud Gateway
--   **Security**: Spring Security (Basic Auth)
--   **Messaging**: Apache Kafka (Async Communication)
 -   **Language**: Java 17
--   **Database**: H2 Database (In-Memory, separate for each service)
--   **ORM**: Spring Data JPA
 -   **Build Tool**: Maven
+-   **Database**: H2 Database (In-Memory)
+
+### Microservices Ecosystem
+-   **Service Discovery**: Netflix Eureka
+-   **API Gateway**: Spring Cloud Gateway
+-   **Security**: Spring Security
+-   **Messaging**: Apache Kafka
+-   **Resilience**: Resilience4j (Circuit Breaker)
+
+---
 
 ## 🛡️ Fault Tolerance & Resilience
 
-The system uses **Resilience4j** to handle failures gracefully.
+The system is designed to handle failures gracefully. If a microservice becomes unavailable, the API Gateway intercepts the failure and provides a fallback response, ensuring the user experience remains uninterrupted.
 
 ```mermaid
 graph TD
@@ -131,109 +162,83 @@ graph TD
     class Gateway gateway;
 ```
 
+---
+
 ## 📂 Project Structure
 
 ```
 school-management/
 ├── backend/
-│   ├── discovery-service/  # Port 8761 (Eureka Server)
-│   ├── api-gateway/        # Port 8080 (API Gateway)
-│   ├── school-service/     # Port 8081
-│   ├── teacher-service/    # Port 8082
-│   ├── class-service/      # Port 8083
-│   └── student-service/    # Port 8084
+│   ├── discovery-service/  # Service Registry (Port 8761)
+│   ├── api-gateway/        # Entry Point (Port 8080)
+│   ├── school-service/     # School Management (Port 8081)
+│   ├── teacher-service/    # Teacher Management (Port 8082)
+│   ├── class-service/      # Class Management (Port 8083)
+│   └── student-service/    # Student Management (Port 8084)
 ├── frontend/               # React Application (Port 5173)
-├── docker-compose.yml      # Kafka & Zookeeper Infrastructure
-└── README.md               # Project Documentation
+├── docker-compose.yml      # Kafka Infrastructure
+└── README.md               # Documentation
 ```
+
+---
 
 ## ⚙️ Installation & Running
 
 ### Prerequisites
--   **Node.js** (v16 or higher)
--   **Java Development Kit (JDK)** (v17 or higher)
--   **Maven** (Optional, wrapper included in standard projects but manual install used here)
--   **Docker Desktop** (Required for Kafka)
+-   **Java 17+**
+-   **Node.js 16+**
+-   **Docker Desktop** (For Kafka)
 
-### 1. Backend Setup (Microservices)
-
-You need to start the **Kafka Infrastructure** first, then **Discovery Service**, **API Gateway**, and finally the 4 microservices. Open 7 separate terminal windows:
-
-**Terminal 1 (Kafka & Zookeeper):**
+### 1. Start Infrastructure (Kafka)
 ```powershell
 docker-compose up -d
 ```
 
-**Terminal 2 (Discovery Service - 8761):**
+### 2. Start Backend Services
+Open separate terminals for each service and run:
+
+**Discovery Service (8761)**
 ```powershell
 cd backend/discovery-service
-$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+mvn spring-boot:run
 ```
 
-**Terminal 3 (API Gateway - 8080):**
+**API Gateway (8080)**
 ```powershell
 cd backend/api-gateway
-$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+mvn spring-boot:run
 ```
 
-**Terminal 4 (School Service - 8081):**
-```powershell
-cd backend/school-service
-$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+**Microservices (8081-8084)**
+Run `mvn spring-boot:run` in each service directory:
+-   `backend/school-service`
+-   `backend/teacher-service`
+-   `backend/class-service`
+-   `backend/student-service`
+
+### 3. Start Frontend
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-**Terminal 5 (Teacher Service - 8082):**
-```powershell
-cd backend/teacher-service
-$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
-```
-
-**Terminal 6 (Class Service - 8083):**
-```powershell
-cd backend/class-service
-$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
-```
-
-**Terminal 7 (Student Service - 8084):**
-```powershell
-cd backend/student-service
-$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
-```
-
-### 2. Frontend Setup (React)
-
-The frontend runs on port `5173`.
-
-> [!IMPORTANT]
-> **Login Credentials**:
-> - **Username**: `admin`
-> - **Password**: `password`
-
-1.  Open a new terminal and navigate to the frontend directory:
-    ```bash
-    cd frontend
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Start the development server:
-    ```bash
-    npm run dev
-    ```
+---
 
 ## 🌐 Usage
 
-1.  Ensure all 4 Backend Services, Discovery Service, and API Gateway are running.
-2.  Open your browser and visit `http://localhost:5173`.
-3.  Log in with the credentials:
+1.  Visit `http://localhost:5173`.
+2.  **Login Credentials**:
     -   **Username**: `admin`
     -   **Password**: `password`
-4.  Navigate through the sidebar to manage different aspects of the school.
+3.  Explore the dashboard and management modules.
+
+---
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request.
 
 ---
+
 *Developed by [Bhaumiksinh](https://github.com/bhaumiksinh)*
