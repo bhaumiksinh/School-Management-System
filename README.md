@@ -105,6 +105,32 @@ graph TD
 -   **ORM**: Spring Data JPA
 -   **Build Tool**: Maven
 
+## 🛡️ Fault Tolerance & Resilience
+
+The system uses **Resilience4j** to handle failures gracefully.
+
+```mermaid
+graph TD
+    %% Styles
+    classDef success fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef failure fill:#ffebee,stroke:#c62828,stroke-width:2px;
+    classDef gateway fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+
+    User([👤 User Request]) --> Gateway{API Gateway<br/>Circuit Breaker}
+    
+    Gateway -->|✅ Service Healthy| Service[Microservice<br/>(e.g., School Service)]
+    Service -->|Response| Gateway
+    Gateway -->|Response| User
+    
+    Gateway -->|❌ Service Down| Fallback[Fallback Controller]
+    Fallback -->|⚠️ Friendly Message| Gateway
+    
+    %% Apply Styles
+    class Service success;
+    class Fallback failure;
+    class Gateway gateway;
+```
+
 ## 📂 Project Structure
 
 ```
