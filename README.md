@@ -16,6 +16,27 @@ The **School Management System** is built with a robust **Spring Boot** backend 
 -   **🎓 Student Management**: Register students and track their class enrollments.
 -   **🎨 Premium UI/UX**: Glassmorphism design, smooth animations, and responsive layout.
 
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    User[User Browser] -->|HTTP/JSON| Frontend[React Frontend<br/>Port: 5173]
+    
+    subgraph Microservices
+        Frontend -->|REST API| School[School Service<br/>Port: 8081]
+        Frontend -->|REST API| Teacher[Teacher Service<br/>Port: 8082]
+        Frontend -->|REST API| Class[Class Service<br/>Port: 8083]
+        Frontend -->|REST API| Student[Student Service<br/>Port: 8084]
+    end
+    
+    subgraph Databases
+        School -.->|JPA| DB1[(H2 DB)]
+        Teacher -.->|JPA| DB2[(H2 DB)]
+        Class -.->|JPA| DB3[(H2 DB)]
+        Student -.->|JPA| DB4[(H2 DB)]
+    end
+```
+
 ## 🛠️ Tech Stack
 
 ### Frontend
