@@ -31,17 +31,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    }
+
+    @Bean
     public MapReactiveUserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
+        // Password: "password" (pre-encrypted with BCrypt)
+        // To generate a new hash, use: new BCryptPasswordEncoder().encode("your_password")
+        UserDetails user = User.builder()
                 .username("admin")
-                .password("password")
+                .password("$2a$10$slYQMMLyC.1Q0wvZSJR.DuS5OJF27eBEzJYbF4.qQ6KwYQZvJHKJa")
                 .roles("USER")
                 .build();
         return new MapReactiveUserDetailsService(user);
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -50,5 +56,4 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-}
+    }}
