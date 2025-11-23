@@ -26,6 +26,8 @@ graph TD
     subgraph Infrastructure
         Eureka[Discovery Service<br/>Port: 8761]
         Gateway
+        Kafka[Apache Kafka<br/>Port: 9092]
+        Zookeeper[Zookeeper<br/>Port: 2181]
     end
 
     subgraph Microservices
@@ -39,6 +41,9 @@ graph TD
         Class -.->|Register| Eureka
         Student -.->|Register| Eureka
         Gateway -.->|Discover| Eureka
+        
+        Student -->|Publish Event| Kafka
+        Kafka -->|Consume Event| School
     end
     
     subgraph Databases
@@ -64,6 +69,7 @@ graph TD
 -   **Service Discovery**: Netflix Eureka Server
 -   **API Gateway**: Spring Cloud Gateway
 -   **Security**: Spring Security (Basic Auth)
+-   **Messaging**: Apache Kafka (Async Communication)
 -   **Language**: Java 17
 -   **Database**: H2 Database (In-Memory, separate for each service)
 -   **ORM**: Spring Data JPA
@@ -81,6 +87,7 @@ school-management/
 │   ├── class-service/      # Port 8083
 │   └── student-service/    # Port 8084
 ├── frontend/               # React Application (Port 5173)
+├── docker-compose.yml      # Kafka & Zookeeper Infrastructure
 └── README.md               # Project Documentation
 ```
 
@@ -90,42 +97,48 @@ school-management/
 -   **Node.js** (v16 or higher)
 -   **Java Development Kit (JDK)** (v17 or higher)
 -   **Maven** (Optional, wrapper included in standard projects but manual install used here)
+-   **Docker Desktop** (Required for Kafka)
 
 ### 1. Backend Setup (Microservices)
 
-You need to start the **Discovery Service** first, then the **API Gateway**, followed by the 4 microservices. Open 6 separate terminal windows:
+You need to start the **Kafka Infrastructure** first, then **Discovery Service**, **API Gateway**, and finally the 4 microservices. Open 7 separate terminal windows:
 
-**Terminal 1 (Discovery Service - 8761):**
+**Terminal 1 (Kafka & Zookeeper):**
+```powershell
+docker-compose up -d
+```
+
+**Terminal 2 (Discovery Service - 8761):**
 ```powershell
 cd backend/discovery-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 2 (API Gateway - 8080):**
+**Terminal 3 (API Gateway - 8080):**
 ```powershell
 cd backend/api-gateway
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 3 (School Service - 8081):**
+**Terminal 4 (School Service - 8081):**
 ```powershell
 cd backend/school-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 4 (Teacher Service - 8082):**
+**Terminal 5 (Teacher Service - 8082):**
 ```powershell
 cd backend/teacher-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 5 (Class Service - 8083):**
+**Terminal 6 (Class Service - 8083):**
 ```powershell
 cd backend/class-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 6 (Student Service - 8084):**
+**Terminal 7 (Student Service - 8084):**
 ```powershell
 cd backend/student-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
