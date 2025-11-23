@@ -21,21 +21,24 @@ The **School Management System** is built with a robust **Spring Boot** backend 
 ```mermaid
 graph TD
     User[User Browser] -->|HTTP/JSON| Frontend[React Frontend<br/>Port: 5173]
+    Frontend -->|REST API| Gateway[API Gateway<br/>Port: 8080]
     
     subgraph Infrastructure
         Eureka[Discovery Service<br/>Port: 8761]
+        Gateway
     end
 
     subgraph Microservices
-        Frontend -->|REST API| School[School Service<br/>Port: 8081]
-        Frontend -->|REST API| Teacher[Teacher Service<br/>Port: 8082]
-        Frontend -->|REST API| Class[Class Service<br/>Port: 8083]
-        Frontend -->|REST API| Student[Student Service<br/>Port: 8084]
+        Gateway -->|Route| School[School Service<br/>Port: 8081]
+        Gateway -->|Route| Teacher[Teacher Service<br/>Port: 8082]
+        Gateway -->|Route| Class[Class Service<br/>Port: 8083]
+        Gateway -->|Route| Student[Student Service<br/>Port: 8084]
         
         School -.->|Register| Eureka
         Teacher -.->|Register| Eureka
         Class -.->|Register| Eureka
         Student -.->|Register| Eureka
+        Gateway -.->|Discover| Eureka
     end
     
     subgraph Databases
@@ -57,8 +60,9 @@ graph TD
 
 ### Backend (Microservices)
 -   **Framework**: Spring Boot 3.2.0
--   **Architecture**: Microservices with Netflix Eureka
+-   **Architecture**: Microservices with Netflix Eureka & Spring Cloud Gateway
 -   **Service Discovery**: Netflix Eureka Server
+-   **API Gateway**: Spring Cloud Gateway
 -   **Language**: Java 17
 -   **Database**: H2 Database (In-Memory, separate for each service)
 -   **ORM**: Spring Data JPA
@@ -70,6 +74,7 @@ graph TD
 school-management/
 ├── backend/
 │   ├── discovery-service/  # Port 8761 (Eureka Server)
+│   ├── api-gateway/        # Port 8080 (API Gateway)
 │   ├── school-service/     # Port 8081
 │   ├── teacher-service/    # Port 8082
 │   ├── class-service/      # Port 8083
@@ -87,7 +92,7 @@ school-management/
 
 ### 1. Backend Setup (Microservices)
 
-You need to start the **Discovery Service** first, followed by the 4 microservices. Open 5 separate terminal windows:
+You need to start the **Discovery Service** first, then the **API Gateway**, followed by the 4 microservices. Open 6 separate terminal windows:
 
 **Terminal 1 (Discovery Service - 8761):**
 ```powershell
@@ -95,25 +100,31 @@ cd backend/discovery-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 2 (School Service - 8081):**
+**Terminal 2 (API Gateway - 8080):**
+```powershell
+cd backend/api-gateway
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+```
+
+**Terminal 3 (School Service - 8081):**
 ```powershell
 cd backend/school-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 3 (Teacher Service - 8082):**
+**Terminal 4 (Teacher Service - 8082):**
 ```powershell
 cd backend/teacher-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 4 (Class Service - 8083):**
+**Terminal 5 (Class Service - 8083):**
 ```powershell
 cd backend/class-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 5 (Student Service - 8084):**
+**Terminal 6 (Student Service - 8084):**
 ```powershell
 cd backend/student-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
