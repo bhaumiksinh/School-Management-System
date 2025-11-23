@@ -4,7 +4,7 @@ A modern, full-stack web application designed to streamline school administratio
 
 ## 🚀 Introduction
 
-The **School Management System** is built with a robust **Spring Boot** backend and a dynamic **React** frontend. It features a clean, responsive design with secure authentication, real-time data visualization, and comprehensive CRUD capabilities for all administrative tasks.
+The **School Management System** is built with a robust **Spring Boot** backend (Microservices Architecture) and a dynamic **React** frontend. It features a clean, responsive design with secure authentication, real-time data visualization, and comprehensive CRUD capabilities for all administrative tasks.
 
 ## ✨ Features
 
@@ -25,10 +25,11 @@ The **School Management System** is built with a robust **Spring Boot** backend 
 -   **Charting**: Recharts
 -   **Routing**: React Router DOM
 
-### Backend
+### Backend (Microservices)
 -   **Framework**: Spring Boot 3.2.0
+-   **Architecture**: Microservices
 -   **Language**: Java 17
--   **Database**: H2 Database (In-Memory)
+-   **Database**: H2 Database (In-Memory, separate for each service)
 -   **ORM**: Spring Data JPA
 -   **Build Tool**: Maven
 
@@ -36,16 +37,13 @@ The **School Management System** is built with a robust **Spring Boot** backend 
 
 ```
 school-management/
-├── backend/            # Spring Boot Application
-│   ├── src/            # Java source code
-│   ├── pom.xml         # Maven configuration
-│   └── ...
-├── frontend/           # React Application
-│   ├── src/            # React source code
-│   ├── public/         # Static assets
-│   ├── package.json    # Node dependencies
-│   └── ...
-└── README.md           # Project Documentation
+├── backend/
+│   ├── school-service/     # Port 8081
+│   ├── teacher-service/    # Port 8082
+│   ├── class-service/      # Port 8083
+│   └── student-service/    # Port 8084
+├── frontend/               # React Application (Port 5173)
+└── README.md               # Project Documentation
 ```
 
 ## ⚙️ Installation & Running
@@ -55,20 +53,33 @@ school-management/
 -   **Java Development Kit (JDK)** (v17 or higher)
 -   **Maven** (Optional, wrapper included in standard projects but manual install used here)
 
-### 1. Backend Setup (Spring Boot)
+### 1. Backend Setup (Microservices)
 
-The backend runs on port `8080`.
+You need to start 4 separate services. Open 4 separate terminal windows:
 
-1.  Navigate to the backend directory:
-    ```bash
-    cd backend
-    ```
-2.  Run the application:
-    *   **Windows (PowerShell)**:
-        ```powershell
-        $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
-        ```
-        *(Note: Adjust the JDK path if your installation is different)*
+**Terminal 1 (School Service - 8081):**
+```powershell
+cd backend/school-service
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+```
+
+**Terminal 2 (Teacher Service - 8082):**
+```powershell
+cd backend/teacher-service
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+```
+
+**Terminal 3 (Class Service - 8083):**
+```powershell
+cd backend/class-service
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+```
+
+**Terminal 4 (Student Service - 8084):**
+```powershell
+cd backend/student-service
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+```
 
 ### 2. Frontend Setup (React)
 
@@ -89,7 +100,7 @@ The frontend runs on port `5173`.
 
 ## 🌐 Usage
 
-1.  Ensure both Backend and Frontend are running.
+1.  Ensure all 4 Backend Services and the Frontend are running.
 2.  Open your browser and visit `http://localhost:5173`.
 3.  Log in with any non-empty username and password (mock authentication enabled for demo).
 4.  Navigate through the sidebar to manage different aspects of the school.
