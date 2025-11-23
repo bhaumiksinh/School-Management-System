@@ -65,49 +65,106 @@ The system follows a **Microservices Architecture** pattern with the following k
 -   **Distributed Database**: Each microservice maintains its own isolated H2 database (Database-per-Service pattern)
 
 
+### Visual Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                           🎓 SCHOOL MANAGEMENT SYSTEM ARCHITECTURE                              │
+└─────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────┐      ┌──────────────┐      ┌────────────────────────────────────────────────────┐
+│   👤 USER    │─────▶│  💻 REACT    │─────▶│         🚪 API GATEWAY (8080)                      │
+│   Browser    │ HTTP │  Frontend    │ REST │    Security • Routing • Load Balancing             │
+│              │      │  Port 5173   │ API  │                                                     │
+└──────────────┘      └──────────────┘      └────────────────────────────────────────────────────┘
+                                                              │
+                                                              │ Routes to Services
+                                                              ▼
+                      ┌───────────────────────────────────────────────────────────────────┐
+                      │              🔍 EUREKA SERVICE DISCOVERY (8761)                   │
+                      │                   All services register here                      │
+                      └───────────────────────────────────────────────────────────────────┘
+                                                              │
+                                                              │ Discovers
+                      ┌───────────────────────────────────────┴───────────────────────────┐
+                      │                                                                   │
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                              ⚙️  MICROSERVICES LAYER (Ports 8081-8089)                          │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                 │
+│  🏫 School      👨‍🏫 Teacher     📚 Class       🎓 Student      📅 Attendance                      │
+│  Port 8081     Port 8082      Port 8083      Port 8084       Port 8085                         │
+│     │              │              │              │                │                             │
+│     ▼              ▼              ▼              ▼                ▼                             │
+│  💾 schooldb   💾 teacherdb   💾 classdb    💾 studentdb    💾 attendancedb                      │
+│                                                                                                 │
+│  📝 Exam        📖 Library     💰 Fee         🗓️ Timetable                                        │
+│  Port 8086     Port 8087      Port 8088      Port 8089                                         │
+│     │              │              │              │                                              │
+│     ▼              ▼              ▼              ▼                                              │
+│  💾 examdb     💾 librarydb    💾 feedb       💾 timetabledb                                     │
+│                                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ Events
+                                      ▼
+                      ┌───────────────────────────────────────┐
+                      │    📨 APACHE KAFKA (Event Bus)        │
+                      │    Asynchronous Event Processing      │
+                      └───────────────────────────────────────┘
+
+Legend:
+  ──▶  Synchronous Communication (HTTP/REST)
+  ─ ─▶ Service Registration/Discovery
+  💾   Database (H2 In-Memory)
+  📨   Event-Driven Messaging
+```
+
+### Detailed Architecture Diagram
+
 ```mermaid
 flowchart LR
     subgraph Client["🖥️ Client Layer"]
-        User([User/Browser])
-        FE[React Frontend<br/>Port 5173]
+        User([👤 User/Browser])
+        FE[💻 React Frontend<br/>Port 5173]
     end
 
     subgraph Gateway["🚪 Gateway Layer"]
-        AG[API Gateway<br/>Port 8080<br/>Security + Routing]
+        AG[🔐 API Gateway<br/>Port 8080<br/>Security + Routing]
     end
 
     subgraph Discovery["🔍 Service Discovery"]
-        EUR[Eureka Server<br/>Port 8761]
+        EUR[🔎 Eureka Server<br/>Port 8761]
     end
 
     subgraph Services["⚙️ Microservices Layer"]
         direction TB
-        S1[School Service<br/>Port 8081]
-        S2[Teacher Service<br/>Port 8082]
-        S3[Class Service<br/>Port 8083]
-        S4[Student Service<br/>Port 8084]
-        S5[Attendance Service<br/>Port 8085]
-        S6[Exam Service<br/>Port 8086]
-        S7[Library Service<br/>Port 8087]
-        S8[Fee Service<br/>Port 8088]
-        S9[Timetable Service<br/>Port 8089]
+        S1[🏫 School Service<br/>Port 8081]
+        S2[👨‍🏫 Teacher Service<br/>Port 8082]
+        S3[📚 Class Service<br/>Port 8083]
+        S4[🎓 Student Service<br/>Port 8084]
+        S5[📅 Attendance Service<br/>Port 8085]
+        S6[📝 Exam Service<br/>Port 8086]
+        S7[📖 Library Service<br/>Port 8087]
+        S8[💰 Fee Service<br/>Port 8088]
+        S9[🗓️ Timetable Service<br/>Port 8089]
     end
 
     subgraph Messaging["📨 Event Messaging"]
-        KAFKA[Apache Kafka<br/>Event Bus]
+        KAFKA[📬 Apache Kafka<br/>Event Bus]
     end
 
     subgraph Databases["💾 Data Layer - Database per Service"]
         direction TB
-        DB1[(schooldb)]
-        DB2[(teacherdb)]
-        DB3[(classdb)]
-        DB4[(studentdb)]
-        DB5[(attendancedb)]
-        DB6[(examdb)]
-        DB7[(librarydb)]
-        DB8[(feedb)]
-        DB9[(timetabledb)]
+        DB1[(💾 schooldb)]
+        DB2[(💾 teacherdb)]
+        DB3[(💾 classdb)]
+        DB4[(💾 studentdb)]
+        DB5[(💾 attendancedb)]
+        DB6[(💾 examdb)]
+        DB7[(💾 librarydb)]
+        DB8[(💾 feedb)]
+        DB9[(💾 timetabledb)]
     end
 
     User -->|HTTP| FE
