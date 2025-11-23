@@ -38,7 +38,8 @@ public class SecurityConfig {
     @Bean
     public MapReactiveUserDetailsService userDetailsService() {
         // Password: "password" (pre-encrypted with BCrypt)
-        // To generate a new hash, use: new BCryptPasswordEncoder().encode("your_password")
+        // To generate a new hash, use: new
+        // BCryptPasswordEncoder().encode("your_password")
         UserDetails user = User.builder()
                 .username("admin")
                 .password("$2a$10$slYQMMLyC.1Q0wvZSJR.DuS5OJF27eBEzJYbF4.qQ6KwYQZvJHKJa")
@@ -48,6 +49,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -56,4 +58,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }}
+    }
+}
