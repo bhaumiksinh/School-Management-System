@@ -30,13 +30,22 @@ The **School Management System** leverages the power of **Spring Boot** and **Re
 
 ## ✨ Features
 
+## ✨ Features
+
+### 🖥️ Core Modules
 -   **🔐 Secure Authentication**: Centralized security via API Gateway using Spring Security (Basic Auth).
 -   **📊 Interactive Dashboard**: Real-time analytics with visual charts and quick action shortcuts.
--   **⚡ Event-Driven Architecture**: Asynchronous communication between services using **Apache Kafka**.
--   **🛡️ Fault Tolerance**: Resilient system design with **Resilience4j** Circuit Breakers and Fallback mechanisms.
--   **🎨 Premium UI/UX**: Modern Glassmorphism design, responsive layout, and smooth animations.
--   **🔍 Service Discovery**: Dynamic service registration and discovery using **Netflix Eureka**.
--   **🚪 API Gateway**: Single entry point for all client requests, handling routing and cross-cutting concerns.
+-   **🏫 School Management**: Comprehensive CRUD for managing school details, including name, address, and contact info.
+-   **👨‍🏫 Teacher Management**: Register and manage teacher profiles, assigning them to specific schools.
+-   **📚 Class Management**: Organize classes, assign teachers, and manage student capacity.
+-   **🎓 Student Management**: Register students, track enrollments, and view detailed student profiles.
+
+### ⚙️ Technical Capabilities
+-   **⚡ Event-Driven Architecture**: Asynchronous communication between services using **Apache Kafka** (e.g., Student registration triggers School updates).
+-   **🛡️ Fault Tolerance**: Resilient system design with **Resilience4j** Circuit Breakers and Fallback mechanisms to handle service failures gracefully.
+-   **🎨 Premium UI/UX**: Modern Glassmorphism design, responsive layout, and smooth animations built with React and Tailwind-like CSS.
+-   **🔍 Service Discovery**: Dynamic service registration and discovery using **Netflix Eureka**, allowing services to find each other without hardcoded URLs.
+-   **🚪 API Gateway**: Single entry point for all client requests, handling routing, load balancing, and cross-cutting concerns.
 
 ---
 
