@@ -22,11 +22,20 @@ The **School Management System** is built with a robust **Spring Boot** backend 
 graph TD
     User[User Browser] -->|HTTP/JSON| Frontend[React Frontend<br/>Port: 5173]
     
+    subgraph Infrastructure
+        Eureka[Discovery Service<br/>Port: 8761]
+    end
+
     subgraph Microservices
         Frontend -->|REST API| School[School Service<br/>Port: 8081]
         Frontend -->|REST API| Teacher[Teacher Service<br/>Port: 8082]
         Frontend -->|REST API| Class[Class Service<br/>Port: 8083]
         Frontend -->|REST API| Student[Student Service<br/>Port: 8084]
+        
+        School -.->|Register| Eureka
+        Teacher -.->|Register| Eureka
+        Class -.->|Register| Eureka
+        Student -.->|Register| Eureka
     end
     
     subgraph Databases
@@ -48,7 +57,8 @@ graph TD
 
 ### Backend (Microservices)
 -   **Framework**: Spring Boot 3.2.0
--   **Architecture**: Microservices
+-   **Architecture**: Microservices with Netflix Eureka
+-   **Service Discovery**: Netflix Eureka Server
 -   **Language**: Java 17
 -   **Database**: H2 Database (In-Memory, separate for each service)
 -   **ORM**: Spring Data JPA
@@ -59,6 +69,7 @@ graph TD
 ```
 school-management/
 ├── backend/
+│   ├── discovery-service/  # Port 8761 (Eureka Server)
 │   ├── school-service/     # Port 8081
 │   ├── teacher-service/    # Port 8082
 │   ├── class-service/      # Port 8083
@@ -76,27 +87,33 @@ school-management/
 
 ### 1. Backend Setup (Microservices)
 
-You need to start 4 separate services. Open 4 separate terminal windows:
+You need to start the **Discovery Service** first, followed by the 4 microservices. Open 5 separate terminal windows:
 
-**Terminal 1 (School Service - 8081):**
+**Terminal 1 (Discovery Service - 8761):**
+```powershell
+cd backend/discovery-service
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
+```
+
+**Terminal 2 (School Service - 8081):**
 ```powershell
 cd backend/school-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 2 (Teacher Service - 8082):**
+**Terminal 3 (Teacher Service - 8082):**
 ```powershell
 cd backend/teacher-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 3 (Class Service - 8083):**
+**Terminal 4 (Class Service - 8083):**
 ```powershell
 cd backend/class-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
 ```
 
-**Terminal 4 (Student Service - 8084):**
+**Terminal 5 (Student Service - 8084):**
 ```powershell
 cd backend/student-service
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"; mvn spring-boot:run
