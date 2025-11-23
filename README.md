@@ -147,14 +147,14 @@ graph TD
     classDef failure fill:#ffebee,stroke:#c62828,stroke-width:2px;
     classDef gateway fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
 
-    User([👤 User Request]) --> Gateway{API Gateway<br/>Circuit Breaker}
+    User([User Request]) --> Gateway{API Gateway<br/>Circuit Breaker}
     
-    Gateway -->|✅ Service Healthy| Service[Microservice<br/>(e.g., School Service)]
+    Gateway -->|Service Healthy| Service[Microservice<br/>(e.g., School Service)]
     Service -->|Response| Gateway
     Gateway -->|Response| User
     
-    Gateway -->|❌ Service Down| Fallback[Fallback Controller]
-    Fallback -->|⚠️ Friendly Message| Gateway
+    Gateway -->|Service Down| Fallback[Fallback Controller]
+    Fallback -->|Friendly Message| Gateway
     
     %% Apply Styles
     class Service success;
