@@ -64,66 +64,68 @@ The system follows a **Microservices Architecture** pattern with the following k
 -   **Event-Driven Communication**: Asynchronous messaging using Apache Kafka for inter-service events
 -   **Distributed Database**: Each microservice maintains its own H2 database for data isolation
 
+
 ```mermaid
-graph TD
-    User["User Request"] -->|HTTP/JSON| Frontend["React Frontend"]
-    Frontend -->|REST API| Gateway["API Gateway"]
-
-    subgraph Infrastructure
-        Eureka["Discovery Service"]
-        Kafka["Apache Kafka"]
+flowchart LR
+    subgraph Client["🖥️ Client Layer"]
+        User([User/Browser])
+        FE[React Frontend<br/>Port 5173]
     end
 
-    subgraph Microservices
-        School["School Service"]
-        Teacher["Teacher Service"]
-        Class["Class Service"]
-        Student["Student Service"]
-        Attendance["Attendance Service"]
-        Exam["Exam Service"]
-        Library["Library Service"]
-        Fee["Fee Service"]
-        Timetable["Timetable Service"]
+    subgraph Gateway["🚪 Gateway Layer"]
+        AG[API Gateway<br/>Port 8080<br/>Security + Routing]
     end
 
-    subgraph Data
-        DB1[("H2 Database")]
+    subgraph Discovery["🔍 Service Discovery"]
+        EUR[Eureka Server<br/>Port 8761]
     end
 
-    Gateway --> School
-    Gateway --> Teacher
-    Gateway --> Class
-    Gateway --> Student
-    Gateway --> Attendance
-    Gateway --> Exam
-    Gateway --> Library
-    Gateway --> Fee
-    Gateway --> Timetable
+    subgraph Services["⚙️ Microservices Layer"]
+        direction TB
+        S1[School Service<br/>Port 8081]
+        S2[Teacher Service<br/>Port 8082]
+        S3[Class Service<br/>Port 8083]
+        S4[Student Service<br/>Port 8084]
+        S5[Attendance Service<br/>Port 8085]
+        S6[Exam Service<br/>Port 8086]
+        S7[Library Service<br/>Port 8087]
+        S8[Fee Service<br/>Port 8088]
+        S9[Timetable Service<br/>Port 8089]
+    end
 
-    School -.-> Eureka
-    Teacher -.-> Eureka
-    Class -.-> Eureka
-    Student -.-> Eureka
-    Attendance -.-> Eureka
-    Exam -.-> Eureka
-    Library -.-> Eureka
-    Fee -.-> Eureka
-    Timetable -.-> Eureka
-    Gateway -.-> Eureka
+    subgraph Messaging["📨 Event Messaging"]
+        KAFKA[Apache Kafka<br/>Event Bus]
+    end
 
-    Student --> Kafka
-    Kafka --> School
+    subgraph Database["💾 Data Layer"]
+        DB[(H2 Database<br/>In-Memory)]
+    end
 
-    School --- DB1
-    Teacher --- DB1
-    Class --- DB1
-    Student --- DB1
-    Attendance --- DB1
-    Exam --- DB1
-    Library --- DB1
-    Fee --- DB1
-    Timetable --- DB1
+    User -->|HTTP| FE
+    FE -->|REST API<br/>+Auth| AG
+    AG -->|Routes| S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9
+    
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 -.->|Register| EUR
+    AG -.->|Discover| EUR
+    
+    S4 -->|Events| KAFKA
+    KAFKA -->|Consume| S1
+    
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 -->|Data| DB
+
+    classDef clientStyle fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000
+    classDef gatewayStyle fill:#fff9c4,stroke:#f57c00,stroke-width:3px,color:#000
+    classDef serviceStyle fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef infraStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef dataStyle fill:#eceff1,stroke:#455a64,stroke-width:2px,color:#000
+
+    class User,FE clientStyle
+    class AG gatewayStyle
+    class S1,S2,S3,S4,S5,S6,S7,S8,S9 serviceStyle
+    class EUR,KAFKA infraStyle
+    class DB dataStyle
 ```
+
 
 ### Key Architecture Benefits
 -   ✅ **Scalability**: Individual services can be scaled independently
@@ -410,7 +412,7 @@ Contributions are welcome! Please follow these steps:
 
 ## 👤 Author
 
-**Bhaumiksinh Gohil**
+**Bhaumiksinh Chavda**
 
 -   GitHub: [@bhaumiksinh](https://github.com/bhaumiksinh)
 -   Repository: [School-Management-System](https://github.com/bhaumiksinh/School-Management-System)
