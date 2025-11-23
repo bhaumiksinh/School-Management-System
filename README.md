@@ -20,38 +20,68 @@ The **School Management System** is built with a robust **Spring Boot** backend 
 
 ```mermaid
 graph TD
-    User[User Browser] -->|HTTP/JSON| Frontend[React Frontend<br/>Port: 5173]
-    Frontend -->|REST API| Gateway[API Gateway<br/>Port: 8080]
-    
-    subgraph Infrastructure
-        Eureka[Discovery Service<br/>Port: 8761]
-        Gateway
-        Kafka[Apache Kafka<br/>Port: 9092]
-        Zookeeper[Zookeeper<br/>Port: 2181]
+    %% Styles
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef gateway fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    classDef service fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef infra fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    classDef db fill:#eceff1,stroke:#455a64,stroke-width:2px,stroke-dasharray: 5 5;
+
+    User[User Browser] -->|HTTP/JSON| Frontend[React Frontend]
+    Frontend -->|REST API| Gateway[API Gateway]
+
+    subgraph Infrastructure [Infrastructure Layer]
+        direction TB
+        Eureka[Discovery Service]
+        Kafka[Apache Kafka]
+        Zookeeper[Zookeeper]
     end
 
-    subgraph Microservices
-        Gateway -->|Route| School[School Service<br/>Port: 8081]
-        Gateway -->|Route| Teacher[Teacher Service<br/>Port: 8082]
-        Gateway -->|Route| Class[Class Service<br/>Port: 8083]
-        Gateway -->|Route| Student[Student Service<br/>Port: 8084]
-        
-        School -.->|Register| Eureka
-        Teacher -.->|Register| Eureka
-        Class -.->|Register| Eureka
-        Student -.->|Register| Eureka
-        Gateway -.->|Discover| Eureka
-        
-        Student -->|Publish Event| Kafka
-        Kafka -->|Consume Event| School
+    subgraph Microservices [Microservices Layer]
+        direction TB
+        School[School Service]
+        Teacher[Teacher Service]
+        Class[Class Service]
+        Student[Student Service]
     end
-    
-    subgraph Databases
-        School -.->|JPA| DB1[(H2 DB)]
-        Teacher -.->|JPA| DB2[(H2 DB)]
-        Class -.->|JPA| DB3[(H2 DB)]
-        Student -.->|JPA| DB4[(H2 DB)]
+
+    subgraph Data [Data Layer]
+        direction TB
+        DB1[(H2 DB)]
+        DB2[(H2 DB)]
+        DB3[(H2 DB)]
+        DB4[(H2 DB)]
     end
+
+    %% Routing
+    Gateway -->|Route /school| School
+    Gateway -->|Route /teachers| Teacher
+    Gateway -->|Route /classes| Class
+    Gateway -->|Route /students| Student
+
+    %% Service Discovery
+    School -.->|Register| Eureka
+    Teacher -.->|Register| Eureka
+    Class -.->|Register| Eureka
+    Student -.->|Register| Eureka
+    Gateway -.->|Discover| Eureka
+
+    %% Async Communication
+    Student -->|Publish 'StudentEvent'| Kafka
+    Kafka -->|Consume 'StudentEvent'| School
+
+    %% Database Connections
+    School --- DB1
+    Teacher --- DB2
+    Class --- DB3
+    Student --- DB4
+
+    %% Apply Styles
+    class Frontend frontend;
+    class Gateway gateway;
+    class School,Teacher,Class,Student service;
+    class Eureka,Kafka,Zookeeper infra;
+    class DB1,DB2,DB3,DB4 db;
 ```
 
 ## 🛠️ Tech Stack
