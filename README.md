@@ -62,7 +62,7 @@ The system follows a **Microservices Architecture** pattern with the following k
 -   **Load Balancing**: Client-side load balancing through Spring Cloud LoadBalancer
 -   **Circuit Breaker**: Fault tolerance with Resilience4j to prevent cascading failures
 -   **Event-Driven Communication**: Asynchronous messaging using Apache Kafka for inter-service events
--   **Distributed Database**: Each microservice maintains its own H2 database for data isolation
+-   **Distributed Database**: Each microservice maintains its own isolated H2 database (Database-per-Service pattern)
 
 
 ```mermaid
@@ -97,8 +97,17 @@ flowchart LR
         KAFKA[Apache Kafka<br/>Event Bus]
     end
 
-    subgraph Database["💾 Data Layer"]
-        DB[(H2 Database<br/>In-Memory)]
+    subgraph Databases["💾 Data Layer - Database per Service"]
+        direction TB
+        DB1[(schooldb)]
+        DB2[(teacherdb)]
+        DB3[(classdb)]
+        DB4[(studentdb)]
+        DB5[(attendancedb)]
+        DB6[(examdb)]
+        DB7[(librarydb)]
+        DB8[(feedb)]
+        DB9[(timetabledb)]
     end
 
     User -->|HTTP| FE
@@ -111,7 +120,15 @@ flowchart LR
     S4 -->|Events| KAFKA
     KAFKA -->|Consume| S1
     
-    S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 -->|Data| DB
+    S1 -->|Data| DB1
+    S2 -->|Data| DB2
+    S3 -->|Data| DB3
+    S4 -->|Data| DB4
+    S5 -->|Data| DB5
+    S6 -->|Data| DB6
+    S7 -->|Data| DB7
+    S8 -->|Data| DB8
+    S9 -->|Data| DB9
 
     classDef clientStyle fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000
     classDef gatewayStyle fill:#fff9c4,stroke:#f57c00,stroke-width:3px,color:#000
@@ -123,7 +140,7 @@ flowchart LR
     class AG gatewayStyle
     class S1,S2,S3,S4,S5,S6,S7,S8,S9 serviceStyle
     class EUR,KAFKA infraStyle
-    class DB dataStyle
+    class DB1,DB2,DB3,DB4,DB5,DB6,DB7,DB8,DB9 dataStyle
 ```
 
 
