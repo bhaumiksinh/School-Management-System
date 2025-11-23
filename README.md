@@ -87,63 +87,6 @@ graph TD
 
 The system is designed to handle failures gracefully. If a microservice becomes unavailable, the API Gateway intercepts the failure and provides a fallback response, ensuring the user experience remains uninterrupted.
 
-```mermaid
-graph TD
-    User[User Request] --> Gateway{API Gateway}
-    
-    Gateway -->|Service Healthy| Service[Microservice]
-    Service -->|Response| Gateway
-    Gateway -->|Response| User
-    
-    Gateway -->|Service Down| Fallback[Fallback Controller]
-    Fallback -->|Friendly Message| Gateway
-    
-    style Service fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style Fallback fill:#ffebee,stroke:#c62828,stroke-width:2px
-    style Gateway fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
-```
-
----
-
-## 📂 Project Structure
-
-```
-school-management/
-├── backend/
-│   ├── discovery-service/  # Service Registry (Port 8761)
-│   ├── api-gateway/        # Entry Point (Port 8080)
-│   ├── school-service/     # School Management (Port 8081)
-│   ├── teacher-service/    # Teacher Management (Port 8082)
-│   ├── class-service/      # Class Management (Port 8083)
-│   ├── student-service/    # Student Management (Port 8084)
-│   ├── attendance-service/ # Attendance Management (Port 8085)
-│   ├── exam-service/       # Exam Management (Port 8086)
-│   ├── library-service/    # Library Management (Port 8087)
-│   ├── fee-service/        # Fee Management (Port 8088)
-│   └── timetable-service/  # Timetable Management (Port 8089)
-├── frontend/               # React Application (Port 5173)
-├── docker-compose.yml      # Kafka Infrastructure
-└── README.md               # Documentation
-```
-
----
-
-## ⚙️ Installation & Running
-
-### Prerequisites
--   **Java 17+**
--   **Node.js 16+**
--   **Docker Desktop** (For Kafka)
-
-### 1. Start Infrastructure (Kafka)
-```powershell
-docker-compose up -d
-```
-
-### 2. Start Backend Services
-Open separate terminals for each service and run:
-
-**Discovery Service (8761)**
 ```powershell
 cd backend/discovery-service
 mvn spring-boot:run
